@@ -1,21 +1,4 @@
-import React, { Component } from 'react';
-import Prism from 'prismjs';
-import './App.css';
-import './prism.css';
-import randomColor from 'randomcolor';
-import { 
-  simpleRefSnippet,
-  simpleCallbackSnippet,
-  inlineCallbackSnippet,
-  boundCallbackSnippet,
-  constructorBoundCallbackSnippet,
-  simpleRefForwardingSnippet,
-  componentRefSnippet,
-  dynamicRefsSnippet,
-  dynamicCreateRefSnippet,
-} from './snippets';
-
-class SimpleRef extends Component {
+export const simpleRefSnippet = `class SimpleRef extends Component {
 
   constructor() {
     super();
@@ -30,29 +13,37 @@ class SimpleRef extends Component {
     return (
       <div>
         <input ref={this.inputRef} />
-        <button onClick={this.onClick.bind(this)}>Click to Focus</button>
+        <button onClick={this.onClick.bind(this)}>
+          Click to Focus
+        </button>
       </div>
-    )
+    );
   }
 }
+`;
 
-class SimpleCallbackRef extends Component {
+export const simpleCallbackSnippet = `class SimpleCallbackRef extends Component {
 
   onClick() {
     this.inputRef.focus();
   }
 
+  // Notice we don't need to set up anything in the constructor 
+  // at the expense of having to add a callback function to the ref
   render() {
     return (
       <div>
         <input ref={ref => { this.inputRef = ref; }} />
-        <button onClick={this.onClick.bind(this)}>Click to Focus</button>
+        <button onClick={this.onClick.bind(this)}>
+          Click to Focus
+        </button>
       </div>
     )
   }
 }
+`;
 
-class InlineCallbackRefWithReRender extends Component {
+export const inlineCallbackSnippet = `class InlineCallbackRefWithReRender extends Component {
 
   constructor() {
     super();
@@ -61,20 +52,33 @@ class InlineCallbackRefWithReRender extends Component {
 
   onClick() {
     this.inputRef.focus();
-    this.setState({count: this.state.count + 1});
+    this.setState({count: this.state.count + 1}); // Force a re-render
   }
 
   render() {
     return (
       <div>
-        <input ref={ref => { this.inputRef = ref; }} />
-        <button onClick={this.onClick.bind(this)}>Click to Focus</button>
+        <input ref={ref => { 
+          // Triggers once on render
+          // Twice for every re-render: first with ref being null and
+          // then with the correct value (input in this case)
+          this.inputRef = ref;
+
+          // Following will raise an error on re-render 
+          // (ref is null in the 1st call)
+          // DON'T DO THAT
+          ref.focus();           
+        }} />
+        <button onClick={this.onClick.bind(this)}>
+          Click to Focus
+        </button>
       </div>
     );
   }
 }
+`;
 
-class BoundCallbackRefWithReRender extends Component {
+export const boundCallbackSnippet = `class BoundCallbackRefWithReRender extends Component {
 
   constructor() {
     super();
@@ -93,18 +97,26 @@ class BoundCallbackRefWithReRender extends Component {
   render() {
     return (
       <div>
+        {/* Binding on render still re-renders twice */}
         <input ref={this.onRefMount.bind(this)} />
-        <button onClick={this.onClick.bind(this)}>Click to Focus</button>
+        <button onClick={this.onClick.bind(this)}>
+          Click to Focus
+        </button>
       </div>
     );
   }
 }
+`;
 
-class ConstructorBoundCallbackRefWithReRender extends Component {
+export const constructorBoundCallbackSnippet = `class ConstructorBoundCallbackRefWithReRender extends Component {
 
   constructor() {
     super();
     this.state = { count: 0 };
+    // In order to avoid calling the callback twice
+    // every re-render you need to bind the context
+    // in the constructor. Notice that it becomes pretty
+    // similar to the createRef API
     this.onRefMount = this.onRefMount.bind(this);
   }
 
@@ -113,6 +125,7 @@ class ConstructorBoundCallbackRefWithReRender extends Component {
     this.setState({count: this.state.count + 1})
   }
 
+  // This is only called on mount - yay!
   onRefMount(ref) {
     this.inputRef = ref;
   }
@@ -121,12 +134,16 @@ class ConstructorBoundCallbackRefWithReRender extends Component {
     return (
       <div>
         <input ref={this.onRefMount} />
-        <button onClick={this.onClick.bind(this)}>Click to Focus</button>
+        <button onClick={this.onClick.bind(this)}>
+          Click to Focus
+        </button>
       </div>
     );
   }
 }
+`;
 
+export const simpleRefForwardingSnippet = `// It MUST be a functional component
 const CustomInput = React.forwardRef((props, ref) => (
   <input ref={ref} />
 ));
@@ -142,6 +159,7 @@ class SimpleRefForwarding extends Component {
     this.inputRef.current.focus();
   }
 
+  // Notice that now we assign the ref to a custom component
   render() {
     return (
       <div>
@@ -153,7 +171,12 @@ class SimpleRefForwarding extends Component {
     );
   }
 }
+`;
 
+export const componentRefSnippet = `// It MUST be a class component
+// Useful if it is strictly necessary to use the state or
+// lifecycle hooks. Otherwise, should be discouraged -- too verbose
+// and error-prone
 class ClassInput extends Component {
 
   constructor() {
@@ -162,7 +185,7 @@ class ClassInput extends Component {
   }
 
   // This will be called by the parent component
-  focus() {
+  customFocusMethod() {
     this.inputRef.current.focus();
   }
 
@@ -175,11 +198,14 @@ class ComponentRef extends Component {
 
   constructor() {
     super();
+    // Notice that two refs are necessary
     this.componentRef = React.createRef();
   }
 
   onClick() {
-    this.componentRef.current.focus();
+    // componentRef refers to a composite component and 
+    // therefore we can access its methods
+    this.componentRef.current.customFocusMethod();
   }
 
   render() {
@@ -193,12 +219,16 @@ class ComponentRef extends Component {
     );
   }
 }
+`;
+
+export const dynamicRefsSnippet = `import randomColor from 'randomcolor';
 
 class DynamicRefs extends Component {
 
   constructor() {
     super();
     this.state = {
+      // Here we have a dynamic array
       tasks: [
         { name: "Task 1", color: "red" },
         { name: "Task 2", color: "green" },
@@ -214,8 +244,8 @@ class DynamicRefs extends Component {
       <div>
         <div><button onClick={() => {
           const newTasks = this.state.tasks.concat([{
-            name: `Task ${this.state.tasks.length + 1}`,
-            color: randomColor()
+            name: "Task " + this.state.tasks.length + 1,
+            color: randomColor() // Just assign some random color
           }]);
           this.setState({tasks: newTasks});
         }}>Add new Task</button></div>
@@ -229,7 +259,11 @@ class DynamicRefs extends Component {
         {this.state.tasks.map((task, i) => (
           <div 
             key={i}
-            ref={ref => { this.refsArray[i] = ref; }} 
+            ref={ref => { 
+              // Callback refs are preferable when 
+              // dealing with dynamic refs
+              this.refsArray[i] = ref; 
+            }} 
             style={{height: "300px", backgroundColor: task.color}}>
             {task.name}
           </div>
@@ -238,6 +272,9 @@ class DynamicRefs extends Component {
     );
   }
 }
+`;
+
+export const dynamicCreateRefSnippet = `import randomColor from 'randomcolor';
 
 class DynamicCreateRef extends Component {
 
@@ -262,16 +299,22 @@ class DynamicCreateRef extends Component {
       <div>
         <div><button onClick={() => {
           const newTasks = this.state.tasks.concat([{
-            name: `Task ${this.state.tasks.length + 1}`,
+            name: "Task " + this.state.tasks.length + 1,
             color: randomColor()
           }]);
           this.setState({tasks: newTasks});
+
+          // We have to manually update the array
+          // Error-prone!
           this.updateRefsArray(newTasks);
         }}>Add new Task</button></div>
         {this.state.tasks.map((task, i) => (
           <button
             key={i}
-            onClick={() => { this.refsArray[i].current.scrollIntoView(); }}>
+            onClick={() => { 
+              // Notice we need to access the current attribute
+              this.refsArray[i].current.scrollIntoView(); 
+            }}>
             Go to {task.name}
           </button>
         ))}
@@ -285,104 +328,6 @@ class DynamicCreateRef extends Component {
         ))}
       </div>
     );
-  } 
-}
-
-class App extends Component {
-
-  componentDidMount() {
-    Prism.highlightAll();
-  }
-
-  renderSnippet(snippet) {
-    return (
-      <pre>
-        <code className="language-javascript">          
-          {snippet}   
-        </code>
-      </pre>
-    );
-  }
-
-  render() {
-    return (
-      <>
-      <header>
-        <h1>React Refs Cheat Sheet</h1>
-      </header>
-      <main>
-        <h2>Simple Cases</h2>
-        <p>
-          When you need a reference to a native DOM element in the
-          same React component.
-        </p>
-        <div>
-          <h3>1. Using <code>createRef</code></h3>
-          <SimpleRef />
-          {this.renderSnippet(simpleRefSnippet)}
-        </div>
-        <div>
-          <h3>2. Using callback</h3>
-          <SimpleCallbackRef />
-          {this.renderSnippet(simpleCallbackSnippet)}
-        </div>
-        <div>
-          <h3>2. Using callback (with re-render)</h3>
-          <InlineCallbackRefWithReRender />
-          {this.renderSnippet(inlineCallbackSnippet)}
-        </div>
-        <div>
-          <h3>3. Binding the callback</h3>
-          <BoundCallbackRefWithReRender />
-          {this.renderSnippet(boundCallbackSnippet)}
-        </div>
-        <div>
-          <h3>4. Binding the callback in the constructor</h3>
-          <ConstructorBoundCallbackRefWithReRender />
-          {this.renderSnippet(constructorBoundCallbackSnippet)}
-        </div>
-        <h2>Ref Forwarding</h2>
-        <p>
-          When you need a reference to a a child element.
-        </p>
-        <div>
-          <h3>1. Refs to functional components</h3>
-          <SimpleRefForwarding />
-          {this.renderSnippet(simpleRefForwardingSnippet)}
-        </div>
-        <div>
-          <h3>2. Refs to custom components</h3>
-          <ComponentRef />
-          {this.renderSnippet(componentRefSnippet)}
-        </div>
-        <h2>Dynamic Refs</h2>
-        <p>
-          When you need references to elements which are created
-          dynamically.
-        </p>
-        <div>
-          <h3>1. Using Callbacks</h3>
-          <DynamicRefs />
-          {this.renderSnippet(dynamicRefsSnippet)}
-        </div>
-        <div>
-          <h3>2. Using <code>createRef</code></h3>
-          <DynamicCreateRef />
-          {this.renderSnippet(dynamicCreateRefSnippet)}
-        </div>
-      </main>
-      <footer>
-        Created by
-        &nbsp;
-        <a href="https://rafaelquintanilha.com">Rafael Quintanilha</a>
-        &nbsp;
-        @
-        {' '}
-        {(new Date()).getFullYear()}
-      </footer>
-      </>
-    );
   }
 }
-
-export default App;
+`;
