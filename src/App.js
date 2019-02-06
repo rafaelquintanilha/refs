@@ -311,62 +311,62 @@ class App extends Component {
         <h1>React Refs Cheat Sheet</h1>
       </header>
       <main>
-        <h2>Simple Cases</h2>
+        <h2 id="simple">Simple Cases</h2>
         <p>
           When you need a reference to a native DOM element in the
           same React component.
         </p>
         <div>
-          <h3>1. Using <code>createRef</code></h3>
+          <h3 id="simple-createref">1. Using <code>createRef</code></h3>
           <SimpleRef />
           {this.renderSnippet(simpleRefSnippet)}
         </div>
         <div>
-          <h3>2. Using callback</h3>
+          <h3 id="simple-callback">2. Using callback</h3>
           <SimpleCallbackRef />
           {this.renderSnippet(simpleCallbackSnippet)}
         </div>
         <div>
-          <h3>2. Using callback (with re-render)</h3>
+          <h3 id="callback-rerender">2. Using callback (with re-render)</h3>
           <InlineCallbackRefWithReRender />
           {this.renderSnippet(inlineCallbackSnippet)}
         </div>
         <div>
-          <h3>3. Binding the callback</h3>
+          <h3 id="callback-inline-binding">3. Binding the callback</h3>
           <BoundCallbackRefWithReRender />
           {this.renderSnippet(boundCallbackSnippet)}
         </div>
         <div>
-          <h3>4. Binding the callback in the constructor</h3>
+          <h3 id="callback-constructor-binding">4. Binding the callback in the constructor</h3>
           <ConstructorBoundCallbackRefWithReRender />
           {this.renderSnippet(constructorBoundCallbackSnippet)}
         </div>
-        <h2>Ref Forwarding</h2>
+        <h2 id="ref-forwarding">Ref Forwarding</h2>
         <p>
           When you need a reference to a a child element.
         </p>
         <div>
-          <h3>1. Refs to functional components</h3>
+          <h3 id="simple-ref-forwarding">1. Refs to functional components</h3>
           <SimpleRefForwarding />
           {this.renderSnippet(simpleRefForwardingSnippet)}
         </div>
         <div>
-          <h3>2. Refs to custom components</h3>
+          <h3 id="forwarding-to-custom-components">2. Refs to custom components</h3>
           <ComponentRef />
           {this.renderSnippet(componentRefSnippet)}
         </div>
-        <h2>Dynamic Refs</h2>
+        <h2 id="dynamic-refs">Dynamic Refs</h2>
         <p>
           When you need references to elements which are created
           dynamically.
         </p>
         <div>
-          <h3>1. Using Callbacks</h3>
+          <h3 id="dynamic-refs-callback">1. Using Callbacks</h3>
           <DynamicRefs />
           {this.renderSnippet(dynamicRefsSnippet)}
         </div>
         <div>
-          <h3>2. Using <code>createRef</code></h3>
+          <h3 id="dynamic-refs-createref">2. Using <code>createRef</code></h3>
           <DynamicCreateRef />
           {this.renderSnippet(dynamicCreateRefSnippet)}
         </div>
