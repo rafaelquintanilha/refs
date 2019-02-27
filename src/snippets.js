@@ -264,7 +264,7 @@ class DynamicRefs extends Component {
               // dealing with dynamic refs
               this.refsArray[i] = ref; 
             }} 
-            style={{height: "300px", backgroundColor: task.color}}>
+            style={{height: "100px", backgroundColor: task.color}}>
             {task.name}
           </div>
         ))}
@@ -322,7 +322,7 @@ class DynamicCreateRef extends Component {
           <div 
             key={i}
             ref={this.refsArray[i]} 
-            style={{height: "300px", backgroundColor: task.color}}>
+            style={{height: "100px", backgroundColor: task.color}}>
             {task.name}
           </div>
         ))}
@@ -330,4 +330,60 @@ class DynamicCreateRef extends Component {
     );
   }
 }
+`;
+
+export const refsWithHooks = `import React, { useRef } from 'react';
+
+const RefsWithHooks = () => {
+  const inputRef = useRef();
+  return (
+    <div>
+      <input ref={inputRef} />
+      <button onClick={() => inputRef.current.focus()}>
+        Click to Focus
+      </button>
+    </div>
+  )
+};
+`;
+
+export const dynamicRefsWithHooks = `import React, { useState } from 'react';
+import randomColor from 'randomcolor';
+
+const DynamicRefsWithHooks = () => {
+  const initialTasks = [
+    { name: "Task 1", color: "red" },
+    { name: "Task 2", color: "green" },
+    { name: "Task 3", color: "yellow" },
+    { name: "Task 4", color: "gray" }
+  ];
+  const [tasks, setTasks] = useState(initialTasks);
+  const refsArray = [];
+  return (
+    <div>
+      <div><button onClick={() => {
+        const newTasks = tasks.concat([{
+          name: "Task " + this.state.tasks.length + 1,
+          color: randomColor()
+        }]);
+        setTasks(newTasks);
+      }}>Add new Task</button></div>
+      {tasks.map((task, i) => (
+        <button
+          key={i}
+          onClick={() => { refsArray[i].scrollIntoView(); }}>
+          Go to {task.name}
+        </button>
+      ))}
+      {tasks.map((task, i) => (
+        <div 
+          key={i}
+          ref={ref => { refsArray[i] = ref; }} 
+          style={{height: "100px", backgroundColor: task.color}}>
+          {task.name}
+        </div>
+      ))}
+    </div>
+  );
+};
 `;

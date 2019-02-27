@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useRef, useState } from 'react';
 import Prism from 'prismjs';
 import './App.css';
 import './prism.css';
@@ -13,6 +13,8 @@ import {
   componentRefSnippet,
   dynamicRefsSnippet,
   dynamicCreateRefSnippet,
+  refsWithHooks,
+  dynamicRefsWithHooks,
 } from './snippets';
 
 class SimpleRef extends Component {
@@ -230,7 +232,7 @@ class DynamicRefs extends Component {
           <div 
             key={i}
             ref={ref => { this.refsArray[i] = ref; }} 
-            style={{height: "300px", backgroundColor: task.color}}>
+            style={{height: "100px", backgroundColor: task.color}}>
             {task.name}
           </div>
         ))}
@@ -279,7 +281,7 @@ class DynamicCreateRef extends Component {
           <div 
             key={i}
             ref={this.refsArray[i]} 
-            style={{height: "300px", backgroundColor: task.color}}>
+            style={{height: "100px", backgroundColor: task.color}}>
             {task.name}
           </div>
         ))}
@@ -287,6 +289,53 @@ class DynamicCreateRef extends Component {
     );
   } 
 }
+
+const RefsWithHooks = () => {
+  const inputRef = useRef();
+  return (
+    <div>
+      <input ref={inputRef} />
+      <button onClick={() => inputRef.current.focus()}>Click to Focus</button>
+    </div>
+  )
+};
+
+const DynamicRefsWithHooks = () => {
+  const initialTasks = [
+    { name: "Task 1", color: "red" },
+    { name: "Task 2", color: "green" },
+    { name: "Task 3", color: "yellow" },
+    { name: "Task 4", color: "gray" }
+  ];
+  const [tasks, setTasks] = useState(initialTasks);
+  const refsArray = [];
+  return (
+    <div>
+      <div><button onClick={() => {
+        const newTasks = tasks.concat([{
+          name: `Task ${tasks.length + 1}`,
+          color: randomColor()
+        }]);
+        setTasks(newTasks);
+      }}>Add new Task</button></div>
+      {tasks.map((task, i) => (
+        <button
+          key={i}
+          onClick={() => { refsArray[i].scrollIntoView(); }}>
+          Go to {task.name}
+        </button>
+      ))}
+      {tasks.map((task, i) => (
+        <div 
+          key={i}
+          ref={ref => { refsArray[i] = ref; }} 
+          style={{height: "100px", backgroundColor: task.color}}>
+          {task.name}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 class App extends Component {
 
@@ -369,6 +418,22 @@ class App extends Component {
           <h3 id="dynamic-refs-createref">2. Using <code>createRef</code></h3>
           <DynamicCreateRef />
           {this.renderSnippet(dynamicCreateRefSnippet)}
+        </div>
+        <h2 id="using-hooks">Using Hooks</h2>
+        <p>
+          As of <a href="https://reactjs.org/blog/2019/02/06/react-v16.8.0.html">React 16.8</a>, Hooks are available.
+          {' '}
+          Hooks are for function components <i>only</i>.
+        </p>
+        <div>
+          <h3 id="hooks-simple-ref">1. Simple</h3>
+          <RefsWithHooks />
+          {this.renderSnippet(refsWithHooks)}
+        </div>
+        <div>
+          <h3 id="dynamic-refs-hooks">2. Dynamic</h3>
+          <DynamicRefsWithHooks />
+          {this.renderSnippet(dynamicRefsWithHooks)}
         </div>
       </main>
       <footer>
