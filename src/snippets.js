@@ -387,3 +387,18 @@ const DynamicRefsWithHooks = () => {
   );
 };
 `;
+
+export const functionComponentWithRef = `import React from 'react';
+
+const FunctionComponentWithRef = () => {
+  const textInput = React.createRef();
+  return (
+    <div>
+      <input ref={textInput} />
+      <button onClick={() => textInput.current.focus()}>
+        Click to Focus
+      </button>
+    </div>
+  );
+};
+`;

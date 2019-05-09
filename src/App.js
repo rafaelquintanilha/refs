@@ -15,6 +15,7 @@ import {
   dynamicCreateRefSnippet,
   refsWithHooks,
   dynamicRefsWithHooks,
+  functionComponentWithRef
 } from './snippets';
 
 class SimpleRef extends Component {
@@ -128,6 +129,18 @@ class ConstructorBoundCallbackRefWithReRender extends Component {
     );
   }
 }
+
+const FunctionComponentWithRef = () => {
+  const textInput = React.createRef();
+  return (
+    <div>
+      <input ref={textInput} />
+      <button onClick={() => textInput.current.focus()}>
+        Click to Focus
+      </button>
+    </div>
+  );
+};
 
 const CustomInput = React.forwardRef((props, ref) => (
   <input ref={ref} />
@@ -291,7 +304,7 @@ class DynamicCreateRef extends Component {
 }
 
 const RefsWithHooks = () => {
-  const inputRef = useRef();
+  const inputRef = useRef(null);
   return (
     <div>
       <input ref={inputRef} />
@@ -389,6 +402,11 @@ class App extends Component {
           <h3 id="callback-constructor-binding">4. Binding the callback in the constructor</h3>
           <ConstructorBoundCallbackRefWithReRender />
           {this.renderSnippet(constructorBoundCallbackSnippet)}
+        </div>
+        <div>
+          <h3 id="function-component-with-ref">5. Using a Function Component</h3>
+          <FunctionComponentWithRef />
+          {this.renderSnippet(functionComponentWithRef)}
         </div>
         <h2 id="ref-forwarding">Ref Forwarding</h2>
         <p>
