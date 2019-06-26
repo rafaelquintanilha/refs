@@ -371,6 +371,9 @@ class App extends Component {
       <>
       <header>
         <h1>React Refs Cheat Sheet</h1>
+        <div>
+          More details in <a href="https://rafaelquintanilha.com/the-complete-guide-to-react-refs/">The Complete Guide to React Refs</a>.
+        </div>
       </header>
       <main>
         <h2 id="simple">Simple Cases</h2>
