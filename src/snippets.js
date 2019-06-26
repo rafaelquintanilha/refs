@@ -347,7 +347,7 @@ const RefsWithHooks = () => {
 };
 `;
 
-export const dynamicRefsWithHooks = `import React, { useState } from 'react';
+export const dynamicRefsWithHooks = `import React, { useState, useRef } from 'react';
 import randomColor from 'randomcolor';
 
 const DynamicRefsWithHooks = () => {
@@ -358,7 +358,7 @@ const DynamicRefsWithHooks = () => {
     { name: "Task 4", color: "gray" }
   ];
   const [tasks, setTasks] = useState(initialTasks);
-  const refsArray = [];
+  const refsArray = useRef([]);
   return (
     <div>
       <div><button onClick={() => {
@@ -371,14 +371,14 @@ const DynamicRefsWithHooks = () => {
       {tasks.map((task, i) => (
         <button
           key={i}
-          onClick={() => { refsArray[i].scrollIntoView(); }}>
+          onClick={() => { refsArray.current[i].scrollIntoView(); }}>
           Go to {task.name}
         </button>
       ))}
       {tasks.map((task, i) => (
         <div 
           key={i}
-          ref={ref => { refsArray[i] = ref; }} 
+          ref={ref => { refsArray.current[i] = ref; }} 
           style={{height: "100px", backgroundColor: task.color}}>
           {task.name}
         </div>
